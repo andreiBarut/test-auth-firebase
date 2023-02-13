@@ -1,7 +1,7 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { auth } from "./firebase";
-
+import { db } from "./firebase";
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
@@ -9,7 +9,9 @@ import {
 import "./App.css";
 import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
+import Post from "./components/Post";
 import { CiUser } from "react-icons/ci";
+import { collection, addDoc } from "firebase/firestore";
 
 function App() {
 	const [userEmail, setUserEmail] = useState("");
@@ -17,6 +19,18 @@ function App() {
 	const [info, setInfo] = useState("");
 	const [currentUser, setCurrentUser] = useState(null);
 	const [profile, setProfile] = useState(null);
+
+	async function addUserToDb(userId, userEmail) {
+		try {
+			const docRef = await addDoc(collection(db, "users"), {
+				userId: userId,
+				userEmail: userEmail,
+			});
+			console.log("Document written with ID: ", docRef.id);
+		} catch (e) {
+			console.error("Error adding document: ", e);
+		}
+	}
 
 	function getUserName(e) {
 		setUserEmail(e.target.value);
@@ -35,6 +49,7 @@ function App() {
 				setProfile(user.email);
 				setCurrentUser(user);
 				setInfo("created account as " + user.email);
+				addUserToDb(user.uid, user.email);
 			})
 			.catch((error) => {
 				const errorCode = `Error: ${error.code.split("/")[1]}`;
@@ -95,6 +110,7 @@ function App() {
 					logIn={logIn}
 					currentUser={currentUser}
 				/>
+				<Post />
 			</div>
 		</div>
 	);
