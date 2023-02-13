@@ -5,6 +5,7 @@ const Post = () => {
 	const [optionsNumber, setOptionsNumber] = useState(0);
 	const [pollNumber, setPollNumber] = useState(null);
 	const [pollText, setPollText] = useState(null);
+	const [pollType, setPollType] = useState(null);
 
 	function handlePollNumber(e) {
 		setOptionsNumber(e.target.value);
